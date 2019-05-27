@@ -1,0 +1,20 @@
+{
+  "name": "SumUp",
+  "description": "A simple way to preview webpages.",
+  "version": "0.1",
+  "manifest_version": 2,
+  "permissions": ["storage"],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": [
+        "script.js",
+        "jquery.js"
+      ]
+    }
+  ],
+  "browser_action": {
+    "default_title": "SumUp",
+    "default_popup": "popup.html"
+  }
+}
