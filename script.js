@@ -23,6 +23,9 @@ function sumup(url, id) {
         // use summary
         load(response.summary, id);
         console.log("Remaining calls: ", Math.round(response.status.remaining_credits/3));
+        if (Math.round(response.status.remaining_credits/3) == 10) {
+            alert("SumUp: Your API will run out shortly.");
+        }
     });
 }
 
