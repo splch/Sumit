@@ -1,7 +1,11 @@
 let key;
 
+function remove(id) {
+    document.getElementsByTagName('a')[id].removeAttribute("title");
+}
+
 function load(summary, id) {
-    document.getElementsByTagName('a')[id].title = summary;
+    document.getElementsByTagName('a')[id].setAttribute("title", summary);
 }
 
 function sumup(url, id) {
@@ -20,10 +24,12 @@ function sumup(url, id) {
         }
     }
     $.ajax(settings).done(function (response) {
+        let sl = Math.round(response.status.remaining_credits/3);
         // use summary
         load(response.summary, id);
-        console.log("Remaining calls: ", Math.round(response.status.remaining_credits/3));
-        if (Math.round(response.status.remaining_credits/3) == 10) {
+        chrome.storage.sync.set({"sl": String(sl)});
+        console.log("Remaining calls: ", sl);
+        if (sl == 10) {
             alert("SumUp: Your API will run out shortly.");
         }
     });
@@ -32,10 +38,13 @@ function sumup(url, id) {
 function modsums() {
     for (let i = 0; i < document.getElementsByTagName('a').length; i++) {
         let tag = document.getElementsByTagName('a')[i];
-        tag.onmouseover = function() {
+        tag.onmouseenter = function() {
             // on hover, send url to sumup function
             sumup(tag.href, i);
         };
+        tag.onmouseout = function() {
+            remove(i);
+        }
     }
 }
 
