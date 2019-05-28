@@ -29,7 +29,7 @@ function load(url, response, id) {
     }
     // set div styles
     for (let i = 0; i < document.getElementsByClassName("summar_" + String(id)).length; i++) {
-        document.getElementsByClassName("summar_" + String(id))[i].style = "position: absolute; width: 300px; height: 150px; margin: 5px; background-color: rgba(255, 255, 255, 1); box-shadow: 0px 0px 10px grey; font-style: italic; font-size: 10pt; overflow: auto; visibility: visible;";
+        document.getElementsByClassName("summar_" + String(id))[i].style = "position: absolute; width: 300px; height: 150px; margin: 5px; background-color: rgba(255, 255, 255, 1); box-shadow: 0px 0px 10px grey; font-style: italic; font-size: 10pt; overflow: auto; zIndex: 2147483647; visibility: visible;";
     }
 }
 
