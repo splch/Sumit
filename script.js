@@ -1,69 +1,85 @@
-let key, urls;
-
-function remove() {
-    // remove all divs
+function hide() {
+    // hide all divs
     for (let i = 0; i < document.getElementsByTagName('a').length; i++) {
-        for (let j = 0; j < document.getElementsByClassName("SumUp_"+String(i)).length; j++) {
-            document.getElementsByClassName("SumUp_"+String(i))[j].parentNode.removeChild(document.getElementsByClassName("SumUp_"+String(i))[j]);
+        for (let j = 0; j < document.getElementsByClassName("summar_"+String(i)).length; j++) {
+            document.getElementsByClassName("summar_"+String(i))[j].style.visibility = "hidden";
         }
     }
 }
 
-function load(response, id) {
-    remove();
-    let div = document.createElement("div");
-    div.className = "SumUp_" + String(id);
-    // display summary in div
-    div.innerHTML = response.summary;
-    // display remaining credits
+function load(url, response, id) {
+    hide();
     let sl = response.status.remaining_credits;
-    console.log("Remaing calls: ", Math.round(sl/3));
-    // chrome.storage.sync.set({"sl": String(sl)});
-    if (sl == 10) {
-        console.log("SumUp: Your API will stop shortly.");
+    let div = document.createElement("div");
+    div.className = "summar_" + String(id);
+    if (response.summary != undefined && sl >= 10) {
+        // display summary in div
+        div.innerHTML = response.summary;
+        // display remaining credits
+        console.log("Remaing calls: ", Math.round(sl/3));
+        // chrome.storage.sync.set({"sl": String(sl)});
+        document.getElementsByTagName('a')[id].parentElement.appendChild(div);
     }
-
-    document.getElementsByTagName('a')[id].parentElement.appendChild(div);
+    else {
+        // display iframe in div
+        let frame = document.createElement("iframe");
+        frame.setAttribute("src", url);
+        frame.className = "summar_" + String(id);
+        document.getElementsByTagName('a')[id].parentElement.appendChild(frame);
+    }
     // set div styles
-    for (let i = 0; i < document.getElementsByClassName("SumUp_" + String(id)).length; i++) {
-        document.getElementsByClassName("SumUp_" + String(id))[i].style = "position: absolute; width: 300px; height: 150px; margin: 5px; background-color: rgba(255, 255, 255, 1); box-shadow: 0px 0px 10px grey; font-style: italic; font-size: 10pt; overflow: auto;";
+    for (let i = 0; i < document.getElementsByClassName("summar_" + String(id)).length; i++) {
+        document.getElementsByClassName("summar_" + String(id))[i].style = "position: absolute; width: 300px; height: 150px; margin: 5px; background-color: rgba(255, 255, 255, 1); box-shadow: 0px 0px 10px grey; font-style: italic; font-size: 10pt; overflow: auto; visibility: visible;";
     }
 }
 
-function sumup(url, id) {
-    let settings = {
-        "async": true,
-        "crossDomain": true,
-        "url": "https://api.meaningcloud.com/summarization-1.0",
-        "method": "POST",
-        "headers": {
-            "content-type": "application/x-www-form-urlencoded"
-        },
-        "data": {
-            "key": key,
-            "url": url,
-            "sentences": "3"
+function summar(url, id) {
+    if (document.getElementsByClassName("summar_" + String(id))[0]) {
+        for (let i = 0; i < document.getElementsByClassName("summar_" + String(id)).length; i++) {
+            document.getElementsByClassName("summar_" + String(id))[i].style.visibility = "visible";
         }
     }
-    $.ajax(settings).done(function (response) {
-        // use summary
-        load(response, id);
-    });
+    else {
+        let settings = {
+            "async": true,
+            "crossDomain": true,
+            "url": "https://api.meaningcloud.com/summarization-1.0",
+            "method": "POST",
+            "headers": {
+                "content-type": "application/x-www-form-urlencoded"
+            },
+            "data": {
+                "key": key,
+                "url": url,
+                "sentences": "3"
+            }
+        }
+        $.ajax(settings).done(function (response) {
+            // use summary
+            load(url, response, id);
+        });
+    }
 }
 
 function modsums() {
     for (let i = 0; i < document.getElementsByTagName('a').length; i++) {
         let tag = document.getElementsByTagName('a')[i];
         tag.onmouseenter = function() {
-            // on hover, send url to sumup function
-            sumup(tag.href, i);
+            // on hover, send url to summar function
+            setTimeout(function() {
+                if (tag.parentElement.querySelector(":hover") == tag) {
+                    summar(tag.href, i);
+                }
+            }, 2000);
         };
         tag.onmouseout = function() {
-            // on mouseout, remove all summary boxes
-            remove();
+            // on mouseout, hide all summary boxes
+            hide();
         }
     }
 }
+
+let key, urls;
 
 chrome.storage.sync.get(["key"], function(result) {
     key = result.key;
