@@ -35,7 +35,7 @@ function load(url, response, id) {
             scrolling = setInterval(function() {
                 document.getElementsByClassName("summar_" + String(id))[i].scrollBy(0, 1);
             }, 50);
-        }, 1000);
+        }, 3000);
     };
 };
 
@@ -48,7 +48,7 @@ function summar(url, id) {
                 scrolling = setInterval(function() {
                     document.getElementsByClassName("summar_" + String(id))[i].scrollBy(0, 1);
                 }, 50);
-            }, 1000);
+            }, 3000);
         };
     }
     else {
