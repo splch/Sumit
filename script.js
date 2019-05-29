@@ -1,5 +1,3 @@
-let key, urls;
-
 function hide() {
     // hide all divs
     for (let i = 0; i < document.getElementsByTagName('a').length; i++) {
@@ -36,7 +34,7 @@ function load(url, response, id) {
 
 function summar(url, id) {
     // if the summary has already been loaded, make that div visible
-    if (document.getElementsByClassName("summar_" + String(id))[0]) {
+    if (document.getElementsByClassName("summar_" + String(id)).length > 0) {
         for (let i = 0; i < document.getElementsByClassName("summar_" + String(id)).length; i++) {
             document.getElementsByClassName("summar_" + String(id))[i].style.visibility = "visible";
         }
@@ -72,7 +70,7 @@ function modsums() {
                 if (tag.parentElement.querySelector(":hover") == tag) {
                     summar(tag.href, i);
                 }
-            }, 2000); // wait 2 seconds before calling summary function
+            }, 1700); // wait about 2 seconds before calling summary function
         };
         tag.onmouseout = function() {
             // on mouseout, hide all summary boxes
@@ -87,15 +85,22 @@ function on_load() {
     });
 
     chrome.storage.sync.get(["whitelist"], function(result) {
-        urls = result.whitelist;
+        if (urls) {
+            urls = result.whitelist;
+        }
+        else {
+            urls = "";
+        }
     });
 
-    if (urls.includes(document.URL.split(".")[1]) === false) {
-        // timeout to allow time for chrome to sync url values
-        setTimeout(function() {
+    // timeout to allow time for chrome to sync url values
+    setTimeout(function() {
+        if (urls.includes(document.URL.split(".")[1]) === false) {
             modsums();
-        }, 1000);
-    }
+        }
+    }, 250);
 }
+
+let key, urls;
 
 on_load();
