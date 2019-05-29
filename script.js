@@ -1,3 +1,5 @@
+let key, urls;
+
 function hide() {
     // hide all divs
     for (let i = 0; i < document.getElementsByTagName('a').length; i++) {
@@ -15,8 +17,8 @@ function load(url, response, id) {
     if (response.summary != undefined && sl >= 10) {
         // display summary in div
         div.innerHTML = response.summary;
-        console.log("Remaing calls: ", Math.round(sl/3));
-        // chrome.storage.sync.set({"sl": String(sl)});
+        console.info("Remaing credits: ", sl);
+        chrome.storage.sync.set({"sl": sl});
         document.getElementsByTagName('a')[id].parentElement.appendChild(div);
     }
     else {
@@ -79,20 +81,21 @@ function modsums() {
     }
 }
 
-let key, urls;
+function on_load() {
+    chrome.storage.sync.get(["key"], function(result) {
+        key = result.key;
+    });
 
-chrome.storage.sync.get(["key"], function(result) {
-    key = result.key;
-});
+    chrome.storage.sync.get(["whitelist"], function(result) {
+        urls = result.whitelist;
+    });
 
-chrome.storage.sync.get(["urls"], function(result) {
-    urls = result.key;
-});
-
-
-if (urls == undefined) {
-    urls = "www.google.com, www.bing.com, www.yahoo.com, www.wikipedia.com";
+    if (urls.includes(document.URL.split(".")[1]) === false) {
+        // timeout to allow time for chrome to sync url values
+        setTimeout(function() {
+            modsums();
+        }, 1000);
+    }
 }
-if (urls.includes(document.URL.split(".")[1]) === false) {
-    modsums();
-}
+
+on_load();
