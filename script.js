@@ -8,6 +8,7 @@ function clear() {
     for (let i = 0; i < document.getElementsByTagName('a').length; i++) {
         if (document.getElementsByClassName("summar_" + String(i))[0]) {
             document.getElementsByClassName("summar_" + String(i))[0].style.visibility = "hidden";
+            document.getElementsByClassName("summar_" + String(i))[0].scrollTop = 0;
         }
     }
 }
@@ -101,7 +102,7 @@ function on_load() {
         if (urls.includes(document.URL.split(".")[1]) === false) {
             modsums();
         }
-    }, 250);
+    }, 500);
 }
 
 let key, urls;

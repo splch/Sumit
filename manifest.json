@@ -1,7 +1,7 @@
 {
   "name": "Summar",
   "description": "A simple way to preview webpages.",
-  "version": "0.2",
+  "version": "0.3",
   "manifest_version": 2,
   "permissions": ["storage"],
   "content_scripts": [
