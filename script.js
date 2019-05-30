@@ -29,7 +29,7 @@ function load(url, response, id) {
     }
     div.className = "summar_" + String(id);
     // set div styles
-    div.style = "position: absolute; width: 300px; height: 150px; margin: 5px; padding: 10px; background-color: rgba(255, 255, 255, 1); box-shadow: 0px 0px 10px grey; font: italic 10pt Times; overflow: auto; zIndex: 2147483647; visibility: visible;";
+    div.style = "position: absolute; width: 300px; height: 150px; margin: 5px; padding: 10px; background-color: rgba(255, 255, 255, 1); box-shadow: 0px 0px 10px grey; font: italic 10pt Times; overflow: auto; zIndex: 10000000 !important; visibility: visible;";
     document.getElementsByTagName('a')[id].parentElement.appendChild(div);
 }
 
@@ -79,7 +79,7 @@ function modsums() {
                     clear();
                     clearInterval(notHover);
                 }
-            }, 1600); // wait about 2 seconds before calling summary function
+            }, 1600); // wait less time than summary before clearing
         };
     }
 }
