@@ -6,3 +6,4 @@ git add --all
 git pull
 git commit -m "$change"
 git push -u origin master
+zip -r -9 --exclude=*.git* --exclude=*.DS_Store* --exclude=*.vscode* --exclude=*.sh* ../Summar.zip *
