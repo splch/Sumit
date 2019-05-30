@@ -20,17 +20,15 @@ function load(url, response, id) {
         div.className = "summar_" + String(id);
         // display summary in div
         div.innerHTML = response.summary;
-        // console.info("Remaing credits: ", response.status.remaining_credits);
         chrome.storage.sync.set({"sl": response.status.remaining_credits});
-        document.getElementsByTagName('a')[id].parentElement.appendChild(div);
     }
     else {
         // display iframe in div
-        let frame = document.createElement("iframe");
-        frame.setAttribute("src", url);
-        frame.className = "summar_" + String(id);
-        document.getElementsByTagName('a')[id].parentElement.appendChild(frame);
+        let div = document.createElement("iframe");
+        div.setAttribute("src", url);
+        div.className = "summar_" + String(id);
     }
+    document.getElementsByTagName('a')[id].parentElement.appendChild(div);
     // set div styles
     document.getElementsByClassName("summar_" + String(id))[0].style = "position: absolute; width: 300px; height: 150px; margin: 5px; padding: 10px; background-color: rgba(255, 255, 255, 1); box-shadow: 0px 0px 10px grey; font: italic 10pt Times; overflow: auto; zIndex: 2147483647; visibility: visible;";
 }
@@ -80,7 +78,7 @@ function modsums() {
                     clear();
                     clearInterval(notHover);
                 }
-            }, 1700); // wait about 2 seconds before calling summary function
+            }, 1600); // wait about 2 seconds before calling summary function
         };
     }
 }
