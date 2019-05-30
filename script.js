@@ -1,8 +1,8 @@
 function clear() {
     // clear all divs
     for (let i = 0; i < document.getElementsByTagName('a').length; i++) {
-        for (let j = 1; j < document.getElementsByClassName("summar_"+String(i)).length; j++) {
-            document.getElementsByClassName("summar_" + String(i))[j].parentNode.removeChild(document.getElementsByClassName("summar_"+String(i))[j]);
+        for (let j = 1; j < document.getElementsByClassName("summar_" + String(i)).length; j++) {
+            document.getElementsByClassName("summar_" + String(i))[j].parentNode.removeChild(document.getElementsByClassName("summar_" + String(i))[j]);
         }
     }
     for (let i = 0; i < document.getElementsByTagName('a').length; i++) {
@@ -15,12 +15,12 @@ function clear() {
 
 function load(url, response, id) {
     clear();
-    let div;
-    if (response.summary != undefined && response.status.remaining_credits >= 10) {
+    let div, rc = response.status.remaining_credits;
+    if (response.summary != undefined && rc >= 10) {
         div = document.createElement("div");
         // display summary in div
         div.innerHTML = response.summary;
-        chrome.storage.sync.set({"sl": response.status.remaining_credits});
+        chrome.storage.sync.set({"sl": rc});
     }
     else {
         // display iframe in div
@@ -35,8 +35,9 @@ function load(url, response, id) {
 
 function summar(url, id) {
     // if the summary has already been loaded, make that div visible
-    if (document.getElementsByClassName("summar_" + String(id))[0]) {
-        document.getElementsByClassName("summar_" + String(id))[0].style.visibility = "visible";
+    let div = document.getElementsByClassName("summar_" + String(id));
+    if (div[0]) {
+        div[0].style.visibility = "visible";
     }
     else {
         let settings = {

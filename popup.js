@@ -14,7 +14,7 @@ chrome.storage.sync.get(["key"], function(result) {
 
 chrome.storage.sync.get(["sl"], function(result) {
     if (result.sl) {
-        document.getElementById("sl").innerHTML = result.sl;
+        document.getElementById("sl").innerHTML = "Searches left &#8776; " + String(Math.round(parseInt(result.sl)/3));
     }
 });
 
