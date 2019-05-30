@@ -1,10 +1,14 @@
 document.getElementById("key").onchange = function() {
-    chrome.storage.sync.set({"key": document.getElementById("key").value});
+    chrome.storage.sync.set({"key": this.value});
 };
 
 document.getElementById("whitelist").onchange = function() {
-    chrome.storage.sync.set({"whitelist": document.getElementById("whitelist").value});
+    chrome.storage.sync.set({"whitelist": this.value});
 };
+
+document.getElementsByTagName("a")[0].onclick = function() {
+    chrome.tabs.create({url: this.href});
+}
 
 chrome.storage.sync.get(["key"], function(result) {
     if (result.key) {
