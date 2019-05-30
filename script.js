@@ -16,7 +16,7 @@ function clear() {
 function load(url, response, id) {
     clear();
     let div, rc = response.status.remaining_credits;
-    if (response.summary != undefined && rc >= 10) {
+    if (response.summary != undefined && response.summary != "" && rc >= 10 ) {
         div = document.createElement("div");
         // display summary in div
         div.innerHTML = response.summary;
