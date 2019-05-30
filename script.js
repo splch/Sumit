@@ -15,22 +15,22 @@ function clear() {
 
 function load(url, response, id) {
     clear();
+    let div;
     if (response.summary != undefined && response.status.remaining_credits >= 10) {
-        let div = document.createElement("div");
-        div.className = "summar_" + String(id);
+        div = document.createElement("div");
         // display summary in div
         div.innerHTML = response.summary;
         chrome.storage.sync.set({"sl": response.status.remaining_credits});
     }
     else {
         // display iframe in div
-        let div = document.createElement("iframe");
+        div = document.createElement("iframe");
         div.setAttribute("src", url);
-        div.className = "summar_" + String(id);
     }
-    document.getElementsByTagName('a')[id].parentElement.appendChild(div);
+    div.className = "summar_" + String(id);
     // set div styles
-    document.getElementsByClassName("summar_" + String(id))[0].style = "position: absolute; width: 300px; height: 150px; margin: 5px; padding: 10px; background-color: rgba(255, 255, 255, 1); box-shadow: 0px 0px 10px grey; font: italic 10pt Times; overflow: auto; zIndex: 2147483647; visibility: visible;";
+    div.style = "position: absolute; width: 300px; height: 150px; margin: 5px; padding: 10px; background-color: rgba(255, 255, 255, 1); box-shadow: 0px 0px 10px grey; font: italic 10pt Times; overflow: auto; zIndex: 2147483647; visibility: visible;";
+    document.getElementsByTagName('a')[id].parentElement.appendChild(div);
 }
 
 function summar(url, id) {
@@ -88,19 +88,17 @@ function on_load() {
         key = result.key;
     });
     chrome.storage.sync.get(["whitelist"], function(result) {
-        if (urls) {
-            urls = result.whitelist;
-        }
-        else {
-            urls = "";
-        }
+        urls = result.whitelist;
     });
     // timeout to allow time for chrome to sync url values
     setTimeout(function() {
+        if (!urls) {
+            urls = "";
+        }
         if (urls.includes(document.URL.split(".")[1]) === false) {
             modsums();
         }
-    }, 500);
+    }, 1);
 }
 
 let key, urls;
