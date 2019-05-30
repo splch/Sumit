@@ -20,6 +20,7 @@ function load(url, response, id) {
         div = document.createElement("div");
         // display summary in div
         div.innerHTML = response.summary;
+        console.log(response.summary);
         chrome.storage.sync.set({"sl": rc});
     }
     else {
@@ -31,6 +32,11 @@ function load(url, response, id) {
     // set div styles
     div.style = "position: absolute; width: 300px; height: 150px; margin: 5px; padding: 10px; background-color: rgba(255, 255, 255, 1); box-shadow: 0px 0px 10px grey; font: italic 10pt Times; overflow: auto; zIndex: 10000000 !important; visibility: visible;";
     document.getElementsByTagName('a')[id].parentElement.appendChild(div);
+    // attempt to show summary over all divs
+    // $(document).ready(function() {
+    //     $(document.getElementsByClassName("summar_" + String(id))[0]).parentsUntil("html").css({"opacity": "0.999"});
+    // });
+    // or document.getElementsByTagName("html")[0].style.opacity = 0.999; ?
 }
 
 function summar(url, id) {
