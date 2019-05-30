@@ -20,7 +20,6 @@ function load(url, response, id) {
         div = document.createElement("div");
         // display summary in div
         div.innerHTML = response.summary;
-        console.log(response.summary);
         chrome.storage.sync.set({"sl": rc});
     }
     else {
@@ -32,11 +31,6 @@ function load(url, response, id) {
     // set div styles
     div.style = "position: absolute; width: 300px; height: 150px; margin: 5px; padding: 10px; background-color: rgba(255, 255, 255, 1); box-shadow: 0px 0px 10px grey; font: italic 10pt Times; overflow: auto; zIndex: 10000000 !important; visibility: visible;";
     document.getElementsByTagName('a')[id].parentElement.appendChild(div);
-    // attempt to show summary over all divs
-    // $(document).ready(function() {
-    //     $(document.getElementsByClassName("summar_" + String(id))[0]).parentsUntil("html").css({"opacity": "0.999"});
-    // });
-    // or document.getElementsByTagName("html")[0].style.opacity = 0.999; ?
 }
 
 function summar(url, id) {
@@ -74,7 +68,9 @@ function modsums() {
             // on hover, send url to summar function
             setTimeout(function() {
                 if (tag.parentElement.querySelector(":hover") == tag) {
-                    summar(tag.href, i);
+                    if(tag.href) {
+                        summar(tag.href, i);
+                    }
                 }
             }, 1700); // wait about 2 seconds before calling summary function
         };
@@ -87,6 +83,9 @@ function modsums() {
                 }
             }, 1600); // wait less time than summary before clearing
         };
+    }
+    for (let i = 0; i < document.querySelectorAll('*').length; i++) {
+        document.querySelectorAll("*")[i].style.opacity = 1;
     }
 }
 
@@ -110,4 +109,6 @@ function on_load() {
 
 let key, urls;
 
-on_load();
+window.onload = function() {
+    on_load();
+}
