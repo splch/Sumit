@@ -26,7 +26,7 @@ function load(url, response, id) {
     else {
         // display iframe in div
         div = document.createElement("iframe");
-        div.setAttribute("src", url);
+        div.src = url;
     }
     div.className = "summar_" + String(id);
     // set div styles
