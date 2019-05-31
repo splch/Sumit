@@ -1,43 +1,44 @@
-function clear() {
+console.time("Sumit initialization"); // measure lag (1, 92)
+
+function clearDivs() {
     // clear all divs
     for (let i = 0; i < document.getElementsByTagName('a').length; i++) {
-        for (let j = 1; j < document.getElementsByClassName("summar_" + String(i)).length; j++) {
-            document.getElementsByClassName("summar_" + String(i))[j].parentNode.removeChild(document.getElementsByClassName("summar_" + String(i))[j]);
+        for (let j = 1; j < document.getElementsByClassName("sumit_" + String(i)).length; j++) {
+            document.getElementsByClassName("sumit_" + String(i))[j].parentNode.removeChild(document.getElementsByClassName("sumit_" + String(i))[j]);
         }
     }
     for (let i = 0; i < document.getElementsByTagName('a').length; i++) {
-        if (document.getElementsByClassName("summar_" + String(i))[0]) {
-            document.getElementsByClassName("summar_" + String(i))[0].style.visibility = "hidden";
-            document.getElementsByClassName("summar_" + String(i))[0].scrollTop = 0;
+        if (document.getElementsByClassName("sumit_" + String(i))[0]) {
+            document.getElementsByClassName("sumit_" + String(i))[0].style.visibility = "hidden";
+            document.getElementsByClassName("sumit_" + String(i))[0].scrollTop = 0;
         }
     }
 }
 
-function load(url, response, id) {
-    clear();
-    let div, rc = response.status.remaining_credits;
-    if (response.summary != undefined && response.summary != "" && rc >= 10 ) {
+function createDivs(url, response, id) {
+    clearDivs();
+    let div = '';
+    if (response.summary != undefined && response.summary != '' && response.status.remaining_credits >= 4) {
         div = document.createElement("div");
         // display summary in div
         div.innerHTML = response.summary;
-        chrome.storage.sync.set({"sl": rc});
+        chrome.storage.sync.set({"cl": response.status.remaining_credits});
     }
     else {
         // display iframe in div
         div = document.createElement("iframe");
         div.src = url;
     }
-    div.className = "summar_" + String(id);
+    div.className = "sumit_" + String(id);
     // set div styles
-    div.style = "position: absolute; width: 300px; height: 150px; margin: 5px; padding: 10px; background-color: rgba(255, 255, 255, 1); box-shadow: 0px 0px 10px grey; font: italic 10pt Times; overflow: auto; zIndex: 10000000 !important; visibility: visible;";
+    div.style = "position: absolute !important; width: 300px; height: 150px; margin: 5px; padding: 10px; background-color: rgba(255, 255, 255, 1) !important; box-shadow: 0px 0px 10px grey; font: italic 10pt Times !important; overflow: auto; zIndex: 10000000 !important; visibility: visible;";
     document.getElementsByTagName('a')[id].parentElement.appendChild(div);
 }
 
-function summar(url, id) {
+function summarize(url, id) {
     // if the summary has already been loaded, make that div visible
-    let div = document.getElementsByClassName("summar_" + String(id));
-    if (div[0]) {
-        div[0].style.visibility = "visible";
+    if (document.getElementsByClassName("sumit_" + String(id))[0]) {
+        document.getElementsByClassName("sumit_" + String(id))[0].style.visibility = "visible";
     }
     else {
         let settings = {
@@ -56,29 +57,29 @@ function summar(url, id) {
         };
         $.ajax(settings).done(function (response) {
             // use summary
-            load(url, response, id);
+            createDivs(url, response, id);
         });
     }
 }
 
-function modsums() {
+function addFunction() {
     for (let i = 0; i < document.getElementsByTagName('a').length; i++) {
         let tag = document.getElementsByTagName('a')[i];
         tag.onmouseenter = function() {
-            // on hover, send url to summar function
+            // on hover, send url to summarization function
             setTimeout(function() {
-                if (tag.parentElement.querySelector(":hover") == tag) {
+                if (tag.parentElement.querySelector(":hover") === tag) {
                     if(tag.href) {
-                        summar(tag.href, i);
+                        summarize(tag.href, i);
                     }
                 }
             }, 1700); // wait about 2 seconds before calling summary function
         };
         tag.onmouseout = function() {
             let notHover = setInterval(function() {
-                if (tag.parentElement.querySelector(":hover") != document.getElementsByClassName("summar_" + String(i))[0]) {
+                if (tag.parentElement.querySelector(":hover") != document.getElementsByClassName("sumit_" + String(i))[0]) {
                     // on mouseout, clear all summary boxes
-                    clear();
+                    clearDivs();
                     clearInterval(notHover);
                 }
             }, 1600); // wait less time than summary before clearing
@@ -87,9 +88,10 @@ function modsums() {
     for (let i = 0; i < document.querySelectorAll('*').length; i++) {
         document.querySelectorAll("*")[i].style.opacity = 1;
     }
+    console.timeEnd("Sumit initialization");
 }
 
-function on_load() {
+function initialize() {
     chrome.storage.sync.get(["key"], function(result) {
         key = result.key;
     });
@@ -97,18 +99,17 @@ function on_load() {
         urls = result.whitelist;
     });
     // timeout to allow time for chrome to sync url values
+    let documentURL = new URL(document.URL);
     setTimeout(function() {
         if (!urls) {
-            urls = "";
+            urls = '';
         }
-        if (urls.includes(document.URL.split(".")[1]) === false) {
-            modsums();
+        if (urls.includes(documentURL.hostname) === false) {
+            addFunction();
         }
-    }, 1);
+    }, 10);
 }
 
-let key, urls;
+let key = urls = '';
 
-window.onload = function() {
-    on_load();
-}
+initialize();
