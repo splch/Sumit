@@ -38,6 +38,7 @@ function createDivs(url, summary, id) {
 }
 
 function summarize(url, id) {
+    let summary;
     // if the summary has already been loaded, make that div visible
     if (document.getElementsByClassName("sumit_" + String(id))[0]) {
         document.getElementsByClassName("sumit_" + String(id))[0].style.visibility = "visible";
@@ -59,8 +60,9 @@ function summarize(url, id) {
         };
         $.ajax(settings).done(function (result) {
             // use summary
-            createDivs(url, result.sentences.slice(0, 3).join(' '), id);
+            summary = result.sentences.slice(0, 3).join(' ')
         });
+        createDivs(url, summary, id);
     }
 }
 
