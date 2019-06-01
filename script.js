@@ -107,9 +107,8 @@ function initialize() {
             urls = '';
         }
         if (urls.includes(documentURL.hostname) === false && documentURL.hostname != '') {
-            console.log("working");
+            addFunction();
         }
-        addFunction();
     }, 10);
 }
 
