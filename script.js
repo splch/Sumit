@@ -59,7 +59,7 @@ function summarize(url, id) {
         };
         $.ajax(settings).done(function (result) {
             // use summary
-            createDivs(url, result.sentences.slice(0, 2).join(' '), id);
+            createDivs(url, result.sentences.slice(0, 3).join(' '), id);
         });
     }
 }
@@ -106,9 +106,10 @@ function initialize() {
         if (!urls) {
             urls = '';
         }
-        if (urls.includes(documentURL.hostname) === false) {
-            addFunction();
+        if (urls.includes(documentURL.hostname) === false && documentURL.hostname != '') {
+            console.log("working");
         }
+        addFunction();
     }, 10);
 }
 
