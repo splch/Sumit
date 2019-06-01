@@ -15,20 +15,13 @@ function clearDivs() {
     }
 }
 
-function createDivs(url, summary, imgSrc, id) {
+function createDivs(url, summary, id) {
     clearDivs();
     let div = '';
     if (summary) {
         div = document.createElement("div");
         // display summary in div
         div.innerHTML = summary;
-        // display image
-        if (!imgSrc) {
-            img = document.createElement("img");
-            img.src = imgSrc;
-            img.style = "position: relative; height: 150px; padding: 0 50% 0 50%;"
-            div.insertBefore(img, div.childNodes[0]);
-        }
         // chrome.storage.sync.set({"cl": response.status.remaining_credits});
     }
     else {
@@ -48,11 +41,10 @@ function summarize(url, id) {
         document.getElementsByClassName("sumit_" + String(id))[0].style.visibility = "visible";
     }
     else {
-        let title, imgSrc, summary;
         let settings = {
             "async": true,
             "crossDomain": true,
-            "url": "https://api.aylien.com/api/v1/extract",
+            "url": "https://api.aylien.com/api/v1/summarize",
             "method": "POST",
             "headers": {
                 "content-type": "application/x-www-form-urlencoded",
@@ -60,34 +52,12 @@ function summarize(url, id) {
                 "X-AYLIEN-TextAPI-Application-ID": apiID,
             },
             "data": {
-                "best_image": true,
                 "url": url,
             }
         };
-        $.ajax(settings).done(function (result0, err0, info0) {
-            // set image and title for summary
-            title = result0.title;
-            imgSrc = result0.image;
-            settings = {
-                "async": true,
-                "crossDomain": true,
-                "url": "https://api.aylien.com/api/v1/summarize",
-                "method": "POST",
-                "headers": {
-                    "content-type": "application/x-www-form-urlencoded",
-                    "X-AYLIEN-TextAPI-Application-Key": apiKey,
-                    "X-AYLIEN-TextAPI-Application-ID": apiID,
-                },
-                "data": {
-                    "url": url,
-                    "title": title,
-                }
-            };
-            $.ajax(settings).done(function (result1, err1, info1) {
-                // use summary
-                summary = result1.sentences.slice(0, 2).join(' ');
-                createDivs(url, summary, imgSrc, id);
-            });
+        $.ajax(settings).done(function (result) {
+            // use summary
+            createDivs(url, result.sentences.slice(0, 2).join(' '), id);
         });
     }
 }
@@ -103,7 +73,7 @@ function addFunction() {
                         summarize(tag.href, i);
                     }
                 }
-            }, 1000); // wait about 2 seconds before calling summary function
+            }, 1400); // wait about 2 seconds before calling summary function
         };
         tag.onmouseout = function() {
             let notHover = setInterval(function() {
@@ -112,13 +82,9 @@ function addFunction() {
                     clearDivs();
                     clearInterval(notHover);
                 }
-            }, 900); // wait less time than summary before clearing
+            }, 1300); // wait less time than summary before clearing
         };
     }
-    // allows for z-Index to take effect
-    // for (let i = 0; i < document.querySelectorAll('*').length; i++) {
-    //     document.querySelectorAll("*")[i].style.opacity = 1;
-    // }
     console.timeEnd("Sumit initialization");
 }
 
