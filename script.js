@@ -1,5 +1,7 @@
 console.time("Sumit initialization"); // measure lag (1, 92)
 
+let apiID = apiKey = urls = '';
+
 function clearDivs() {
     // clear all divs
     for (let i = 0; i < document.getElementsByTagName('a').length; i++) {
@@ -109,7 +111,5 @@ function initialize() {
         }
     }, 10);
 }
-
-let apiID = apiKey = urls = '';
 
 initialize();

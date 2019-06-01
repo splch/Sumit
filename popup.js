@@ -11,7 +11,7 @@ document.getElementById("whitelist").onchange = function() {
 };
 
 document.getElementsByTagName("a")[0].onclick = function() {
-    chrome.tabs.create({url: this.href});
+    chrome.tabs.create({"url": this.href});
 }
 
 chrome.storage.sync.get(["id"], function(result) {
