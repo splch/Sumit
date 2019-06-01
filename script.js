@@ -63,7 +63,7 @@ function summarize(url, id) {
         $.ajax(settings).always(function (result, err, limit) {
             // create div regardless of summary
             if (err === "success") {
-                summary = result.sentences.slice(0, 3).join(' '); // 3 sentence summary
+                summary = result.sentences.slice(0, 2).join(' '); // 3 sentence summary
                 chrome.storage.sync.set({"cl": limit.getResponseHeader("X-RateLimit-Remaining")});
             }
             createDivs(url, summary, id);
