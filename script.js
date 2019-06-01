@@ -58,11 +58,13 @@ function summarize(url, id) {
                 "url": url,
             }
         };
-        $.ajax(settings).done(function (result) {
+        $.ajax(settings).always(function (result) {
             // use summary
-            summary = result.sentences.slice(0, 3).join(' ')
+            if (result.sentences) {
+                summary = result.sentences.slice(0, 3).join(' ');
+            }
+            createDivs(url, summary, id);
         });
-        createDivs(url, summary, id);
     }
 }
 
@@ -81,7 +83,7 @@ function addFunction() {
         };
         tag.onmouseout = function() {
             let notHover = setInterval(function() {
-                if (tag.parentElement.querySelector(":hover") != document.getElementsByClassName("sumit_" + String(i))[0]) {
+                if (tag.parentElement.querySelector(":hover") !== document.getElementsByClassName("sumit_" + String(i))[0]) {
                     // on mouseout, clear all summary boxes
                     clearDivs();
                     clearInterval(notHover);
@@ -108,7 +110,7 @@ function initialize() {
         if (!urls) {
             urls = '';
         }
-        if (urls.includes(documentURL.hostname) === false && documentURL.hostname != '') {
+        if (urls.includes(documentURL.hostname) === false && documentURL.hostname !== '') {
             addFunction();
         }
     }, 10);
