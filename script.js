@@ -18,11 +18,11 @@ function clearDivs() {
 function createDivs(url, response, id) {
     clearDivs();
     let div = '';
-    if (response.summary != undefined && response.summary != '' && response.status.remaining_credits >= 4) {
+    if (response) {
         div = document.createElement("div");
         // display summary in div
-        div.innerHTML = response.summary;
-        chrome.storage.sync.set({"cl": response.status.remaining_credits});
+        div.innerHTML = response;
+        // chrome.storage.sync.set({"cl": response.status.remaining_credits});
     }
     else {
         // display iframe in div
@@ -44,20 +44,21 @@ function summarize(url, id) {
         let settings = {
             "async": true,
             "crossDomain": true,
-            "url": "https://api.meaningcloud.com/summarization-1.0",
+            "url": "https://api.aylien.com/api/v1/summarize",
             "method": "POST",
             "headers": {
-                "content-type": "application/x-www-form-urlencoded"
+                "content-type": "application/x-www-form-urlencoded",
+                "X-AYLIEN-TextAPI-Application-Key": apiKey,
+                "X-AYLIEN-TextAPI-Application-ID": apiID,
             },
             "data": {
-                "key": key,
                 "url": url,
-                "sentences": "3"
             }
         };
-        $.ajax(settings).done(function (response) {
+        $.ajax(settings).done(function (result, err, info) {
             // use summary
-            createDivs(url, response, id);
+            console.log(info);
+            createDivs(url, result.sentences.slice(0, 2).join(' '), id);
         });
     }
 }
@@ -85,15 +86,19 @@ function addFunction() {
             }, 1600); // wait less time than summary before clearing
         };
     }
-    for (let i = 0; i < document.querySelectorAll('*').length; i++) {
-        document.querySelectorAll("*")[i].style.opacity = 1;
-    }
+    // allows for z-Index to take effect
+    // for (let i = 0; i < document.querySelectorAll('*').length; i++) {
+    //     document.querySelectorAll("*")[i].style.opacity = 1;
+    // }
     console.timeEnd("Sumit initialization");
 }
 
 function initialize() {
+    chrome.storage.sync.get(["id"], function(result) {
+        apiID = result.id;
+    });
     chrome.storage.sync.get(["key"], function(result) {
-        key = result.key;
+        apiKey = result.key;
     });
     chrome.storage.sync.get(["whitelist"], function(result) {
         urls = result.whitelist;
@@ -110,6 +115,6 @@ function initialize() {
     }, 10);
 }
 
-let key = urls = '';
+let apiID = apiKey = urls = '';
 
 initialize();

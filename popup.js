@@ -1,3 +1,7 @@
+document.getElementById("id").onchange = function() {
+    chrome.storage.sync.set({"id": this.value});
+};
+
 document.getElementById("key").onchange = function() {
     chrome.storage.sync.set({"key": this.value});
 };
@@ -9,6 +13,12 @@ document.getElementById("whitelist").onchange = function() {
 document.getElementsByTagName("a")[0].onclick = function() {
     chrome.tabs.create({url: this.href});
 }
+
+chrome.storage.sync.get(["id"], function(result) {
+    if (result.id) {
+        document.getElementById("id").value = result.id;
+    }
+});
 
 chrome.storage.sync.get(["key"], function(result) {
     if (result.key) {
