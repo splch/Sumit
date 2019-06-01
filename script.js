@@ -42,6 +42,7 @@ function summarize(url, id) {
     if (document.getElementsByClassName("sumit" + String(id))[0]) {
         document.getElementsByClassName("sumit" + String(id))[0].style.visibility = "visible";
     }
+    // when there aren't many searches left, load iframe
     else if (cl <= 10) {
         createDivs(url, summary, id);
     }
