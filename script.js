@@ -15,13 +15,20 @@ function clearDivs() {
     }
 }
 
-function createDivs(url, response, id) {
+function createDivs(url, summary, imgSrc, id) {
     clearDivs();
     let div = '';
-    if (response) {
+    if (summary) {
         div = document.createElement("div");
         // display summary in div
-        div.innerHTML = response;
+        div.innerHTML = summary;
+        // display image
+        if (!imgSrc) {
+            img = document.createElement("img");
+            img.src = imgSrc;
+            img.style = "position: relative; height: 150px; padding: 0 50% 0 50%;"
+            div.insertBefore(img, div.childNodes[0]);
+        }
         // chrome.storage.sync.set({"cl": response.status.remaining_credits});
     }
     else {
@@ -31,7 +38,7 @@ function createDivs(url, response, id) {
     }
     div.className = "sumit_" + String(id);
     // set div styles
-    div.style = "position: absolute !important; width: 300px; height: 150px; margin: 5px; padding: 10px; background-color: rgba(255, 255, 255, 1) !important; box-shadow: 0px 0px 10px grey; font: italic 10pt Times !important; overflow: auto; zIndex: 10000000 !important; visibility: visible;";
+    div.style = "position: absolute !important; width: 300px; max-height: 250px; margin: 5px; padding: 10px; background-color: rgba(255, 255, 255, 1) !important; box-shadow: 0px 0px 10px grey; font: italic 10pt Times !important; overflow: auto; zIndex: 10000000 !important; visibility: visible;";
     document.getElementsByTagName('a')[id].parentElement.appendChild(div);
 }
 
@@ -41,10 +48,11 @@ function summarize(url, id) {
         document.getElementsByClassName("sumit_" + String(id))[0].style.visibility = "visible";
     }
     else {
+        let title, imgSrc, summary;
         let settings = {
             "async": true,
             "crossDomain": true,
-            "url": "https://api.aylien.com/api/v1/summarize",
+            "url": "https://api.aylien.com/api/v1/extract",
             "method": "POST",
             "headers": {
                 "content-type": "application/x-www-form-urlencoded",
@@ -52,13 +60,34 @@ function summarize(url, id) {
                 "X-AYLIEN-TextAPI-Application-ID": apiID,
             },
             "data": {
+                "best_image": true,
                 "url": url,
             }
         };
-        $.ajax(settings).done(function (result, err, info) {
-            // use summary
-            console.log(info);
-            createDivs(url, result.sentences.slice(0, 2).join(' '), id);
+        $.ajax(settings).done(function (result0, err0, info0) {
+            // set image and title for summary
+            title = result0.title;
+            imgSrc = result0.image;
+            settings = {
+                "async": true,
+                "crossDomain": true,
+                "url": "https://api.aylien.com/api/v1/summarize",
+                "method": "POST",
+                "headers": {
+                    "content-type": "application/x-www-form-urlencoded",
+                    "X-AYLIEN-TextAPI-Application-Key": apiKey,
+                    "X-AYLIEN-TextAPI-Application-ID": apiID,
+                },
+                "data": {
+                    "url": url,
+                    "title": title,
+                }
+            };
+            $.ajax(settings).done(function (result1, err1, info1) {
+                // use summary
+                summary = result1.sentences.slice(0, 2).join(' ');
+                createDivs(url, summary, imgSrc, id);
+            });
         });
     }
 }
@@ -74,7 +103,7 @@ function addFunction() {
                         summarize(tag.href, i);
                     }
                 }
-            }, 1700); // wait about 2 seconds before calling summary function
+            }, 1000); // wait about 2 seconds before calling summary function
         };
         tag.onmouseout = function() {
             let notHover = setInterval(function() {
@@ -83,7 +112,7 @@ function addFunction() {
                     clearDivs();
                     clearInterval(notHover);
                 }
-            }, 1600); // wait less time than summary before clearing
+            }, 900); // wait less time than summary before clearing
         };
     }
     // allows for z-Index to take effect
