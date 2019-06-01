@@ -28,7 +28,7 @@ chrome.storage.sync.get(["key"], function(result) {
 
 chrome.storage.sync.get(["cl"], function(result) {
     if (result.cl) {
-        document.getElementById("sl").innerHTML = "Searches left &#8776; " + String(Math.round(parseInt(result.cl)/3));
+        document.getElementById("sl").innerHTML = "Searches left: " + result.cl;
     }
 });
 

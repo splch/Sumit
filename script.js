@@ -1,6 +1,6 @@
 console.time("Sumit initialization"); // measure lag Ln {1, 94}
 
-let apiID = apiKey = urls = '';
+let apiID = apiKey = cl = urls = 0;
 
 function clearDivs() {
     // clear all divs
@@ -24,7 +24,6 @@ function createDivs(url, summary, id) {
         div = document.createElement("div");
         // display summary in div
         div.innerHTML = summary;
-        // chrome.storage.sync.set({"cl": response.status.remaining_credits});
     }
     else {
         // display iframe in div
@@ -43,6 +42,9 @@ function summarize(url, id) {
     if (document.getElementsByClassName("sumit" + String(id))[0]) {
         document.getElementsByClassName("sumit" + String(id))[0].style.visibility = "visible";
     }
+    else if (cl <= 10) {
+        createDivs(url, summary, id);
+    }
     else {
         let settings = {
             "async": true,
@@ -58,10 +60,11 @@ function summarize(url, id) {
                 "url": url,
             }
         };
-        $.ajax(settings).always(function (result) {
+        $.ajax(settings).always(function (result, err, limit) {
             // create div regardless of summary
-            if (result.sentences) {
+            if (err === "success") {
                 summary = result.sentences.slice(0, 3).join(' '); // 3 sentence summary
+                chrome.storage.sync.set({"cl": limit.getResponseHeader("X-RateLimit-Remaining")});
             }
             createDivs(url, summary, id);
         });
@@ -100,6 +103,9 @@ function initialize() {
     });
     chrome.storage.sync.get(["key"], function(result) {
         apiKey = result.key;
+    });
+    chrome.storage.sync.get(["cl"], function(result) {
+        cl = result.cl;
     });
     chrome.storage.sync.get(["whitelist"], function(result) {
         urls = result.whitelist;
