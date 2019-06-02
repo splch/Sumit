@@ -32,7 +32,7 @@ function createDivs(url, summary, id) {
     }
     div.className = "sumit" + String(id);
     // set div styles
-    div.style = "position: absolute !important; width: 300px; max-height: 250px; margin: 5px; padding: 10px; background-color: rgba(255, 255, 255, 1) !important; box-shadow: 0px 0px 10px grey; font: italic 10pt Times !important; overflow: auto; zIndex: 10000000 !important; visibility: visible;";
+    div.style = "position: absolute !important; width: 275px; max-height: 125px; margin: 5px; padding: 10px; background-color: rgba(255, 255, 255, 1) !important; box-shadow: 0px 0px 10px grey; font: italic 10pt Times !important; overflow: auto; zIndex: 10000000 !important; visibility: visible;";
     document.getElementsByTagName('a')[id].parentElement.appendChild(div);
 }
 
