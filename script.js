@@ -32,11 +32,12 @@ function createDivs(url, summary, id) {
     }
     div.className = "sumit" + String(id);
     // set div styles
-    div.style = "position: absolute !important; width: 275px; max-height: 125px; margin: 5px; padding: 10px; background-color: rgba(255, 255, 255, 1) !important; box-shadow: 0px 0px 10px grey; font: italic 10pt Times !important; overflow: auto; zIndex: 10000000 !important; visibility: visible;";
+    div.style = "position: absolute !important; width: 275px; max-height: 150px; margin: 5px; padding: 10px; background-color: rgba(255, 255, 255, 1) !important; box-shadow: 0px 0px 10px grey; font: italic 10pt Times !important; overflow: auto; zIndex: 10000000 !important; visibility: visible;";
     document.getElementsByTagName('a')[id].parentElement.appendChild(div);
 }
 
 function summarize(url, id) {
+    let i = 0;
     let summary;
     // if the summary has already been loaded, make that div visible
     if (document.getElementsByClassName("sumit" + String(id))[0]) {
@@ -59,15 +60,17 @@ function summarize(url, id) {
             },
             "data": {
                 "url": url,
+                "sentences_number": 3,
             }
         };
         $.ajax(settings).always(function (result, err, limit) {
             // create div regardless of summary
-            if (err === "success") {
-                summary = result.sentences.slice(0, 2).join(' '); // 3 sentence summary
+            if (err === "success" && i === 0) {
+                summary = result.sentences.join(' ');
                 chrome.storage.sync.set({"cl": limit.getResponseHeader("X-RateLimit-Remaining")});
             }
             createDivs(url, summary, id);
+            i++; // i prevents two requests from occuring
         });
     }
 }
