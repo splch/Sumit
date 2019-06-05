@@ -1,4 +1,4 @@
-console.time("Sumit initialization"); // measure lag Ln {1, 94}
+console.time("Sumit initialization"); // measure lag Ln {1, 101}
 
 let apiID = apiKey = cl = urls = 0;
 
@@ -26,12 +26,12 @@ function createDivs(url, summary, id) {
         div.innerHTML = summary;
     }
     else {
-        // display iframe in div
         div = document.createElement("iframe");
+        // load url in iframe
         div.src = url;
     }
     div.className = "sumit" + String(id);
-    // set div styles
+    // set div style
     div.style = "position: absolute !important; width: 275px; max-height: 150px; margin: 5px; padding: 10px; background-color: rgba(255, 255, 255, 1) !important; box-shadow: 0px 0px 10px grey; font: italic 10pt Times !important; overflow: auto; zIndex: 10000000 !important; visibility: visible;";
     document.getElementsByTagName('a')[id].parentElement.appendChild(div);
 }
