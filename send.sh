@@ -6,4 +6,10 @@
 #git pull
 #git commit -m "$change"
 #git push -u origin master
-zip -r -9 --exclude=*.git* --exclude=*.DS_Store* --exclude=*.vscode* --exclude=*.sh* ../Sumit.zip *
+
+sed -i '' 's/let/var/g' script.js
+touch background.js
+uglifyjs script.js > background.js
+sed -i '' 's/var/let/g' script.js
+
+zip -r -9 --exclude=*.git* --exclude=*.DS_Store* --exclude=*.vscode* --exclude=*.sh* --exclude=*script.js* ../Sumit.zip *
