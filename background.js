@@ -3,16 +3,17 @@ console.time("Sumit initialization"); // measure lag Ln {1, 101}
 let apiID = apiKey = cl = urls = 0;
 
 function clearDivs() {
-    // clear all divs
-    for (let i = 0; i < document.getElementsByTagName('a').length; i++) {
-        for (let j = 1; j < document.getElementsByClassName("sumit" + String(i)).length; j++) {
-            document.getElementsByClassName("sumit" + String(i))[j].parentNode.removeChild(document.getElementsByClassName("sumit" + String(i))[j]);
-        }
-    }
+    // hide created divs
     for (let i = 0; i < document.getElementsByTagName('a').length; i++) {
         if (document.getElementsByClassName("sumit" + String(i))[0]) {
             document.getElementsByClassName("sumit" + String(i))[0].style.visibility = "hidden";
             document.getElementsByClassName("sumit" + String(i))[0].scrollTop = 0;
+        }
+    }
+    // clear other divs
+    for (let i = 0; i < document.getElementsByTagName('a').length; i++) {
+        for (let j = 1; j < document.getElementsByClassName("sumit" + String(i)).length; j++) {
+            document.getElementsByClassName("sumit" + String(i))[j].parentNode.removeChild(document.getElementsByClassName("sumit" + String(i))[j]);
         }
     }
 }
