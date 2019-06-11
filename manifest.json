@@ -1,7 +1,7 @@
 {
   "name": "Sumit",
   "description": "A simple way to preview webpages.",
-  "version": "1.01",
+  "version": "1.02",
   "manifest_version": 2,
   "permissions": ["storage"],
   "content_scripts": [
