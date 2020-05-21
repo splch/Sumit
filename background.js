@@ -118,8 +118,9 @@ function initialize() {
     // timeout to allow time for chrome to sync url values
     let documentURL = new URL(document.URL);
     setTimeout(function () {
-        if (!urls) { urls = '' };
-        if (urls && urls.includes(documentURL.hostname) || urls === '*') { addFunction() };
+        if (!urls) { urls = ''; };
+        if (urls && urls.includes(documentURL.hostname) || urls === '*') { addFunction(); };
+        else { console.timeEnd("Sumit initialization"); }
     }, 10);
 }
 
