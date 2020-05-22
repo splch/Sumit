@@ -1,14 +1,14 @@
 document.getElementById("id").onchange = function () {
     chrome.storage.sync.set({ "id": this.value });
-};
+}
 
 document.getElementById("key").onchange = function () {
     chrome.storage.sync.set({ "key": this.value });
-};
+}
 
 document.getElementById("whitelist").onchange = function () {
     chrome.storage.sync.set({ "whitelist": this.value });
-};
+}
 
 chrome.storage.sync.get(["id"], function (result) {
     if (result.id) {
