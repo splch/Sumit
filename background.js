@@ -37,6 +37,24 @@ function createDivs(url, summary, id) {
     document.getElementsByTagName("a")[id].parentElement.appendChild(div);
 }
 
+function xmlRequest(url, summary, id) {
+    let xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            summary = JSON.parse(this.responseText).sentences.join(" ");
+            createDivs(url, summary, id);
+        }
+        else if (this.readyState == 4 && this.status != 200) {
+            createDivs(url, summary, id);
+        }
+    };
+    // get request to aylien sandbox
+    xhttp.open("GET", "https://sandbox.aylien.com/textapi/summarize?" +
+        "sentences_number=" + String(3) +
+        "&url=" + encodeURIComponent(url), true);
+    xhttp.send();
+}
+
 function summarize(url, id) {
     let i = 0;
     let summary;
@@ -48,7 +66,7 @@ function summarize(url, id) {
     // else if (cl < 10) {
     //     createDivs(url, summary, id);
     // }
-    else {
+    else if (apiKey && apiID) {
         let settings = {
             "url": "https://api.aylien.com/api/v1/summarize",
             "method": "POST",
@@ -63,13 +81,18 @@ function summarize(url, id) {
         }
         $.ajax(settings).always(function (result, err, limit) {
             // create div regardless of summary
-            if (err === "success" && i === 0) {
+            if (err === "success") {
                 summary = result.sentences.join(" ");
                 chrome.storage.sync.set({ "cl": limit.getResponseHeader("X-RateLimit-Remaining") });
+                createDivs(url, summary, id);
             }
-            createDivs(url, summary, id);
-            i++; // i prevents two requests from occuring
+            else if (err === "error") {
+                xmlRequest(url, summary, id);
+            }
         });
+    }
+    else {
+        xmlRequest(url, summary, id);
     }
 }
 
@@ -85,7 +108,7 @@ function addFunction() {
                     }
                 }
             }, 1500); // wait about 2 seconds before calling summary function
-        }
+        };
         tag.onmouseout = function () {
             let notHover = setInterval(function () {
                 if (tag.parentElement.querySelector(":hover") !== document.getElementsByClassName("Sumit_" + String(i))[0]) {
@@ -94,7 +117,7 @@ function addFunction() {
                     clearInterval(notHover);
                 }
             }, 1400); // wait less time than summary before clearing
-        }
+        };
     }
     console.timeEnd("Sumit initialization");
 }
@@ -105,18 +128,10 @@ function initialize() {
         if (result.id) {
             apiID = result.id;
         }
-        else {
-            apiID = "61be737d";
-            // chrome.storage.sync.set({ "id": apiID });
-        }
     });
     chrome.storage.sync.get(["key"], function (result) {
         if (result.key) {
             apiKey = result.key;
-        }
-        else {
-            apiKey = "06158190ece41f5877ac7709d5ee0d94";
-            // chrome.storage.sync.set({ "key": apiKey });
         }
     });
     chrome.storage.sync.get(["cl"], function (result) {
