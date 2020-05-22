@@ -102,17 +102,21 @@ function addFunction() {
 function initialize() {
     // get popup values from chrome storage
     chrome.storage.sync.get(["id"], function (result) {
-        if (result.id) { apiID = result.id; }
+        if (result.id) {
+            apiID = result.id;
+        }
         else {
             apiID = "61be737d";
-            chrome.storage.sync.set({ "id": apiID });
+            // chrome.storage.sync.set({ "id": apiID });
         }
     });
     chrome.storage.sync.get(["key"], function (result) {
-        if (result.key) { apiKey = result.key; }
+        if (result.key) {
+            apiKey = result.key;
+        }
         else {
             apiKey = "06158190ece41f5877ac7709d5ee0d94";
-            chrome.storage.sync.set({ "key": apiKey });
+            // chrome.storage.sync.set({ "key": apiKey });
         }
     });
     chrome.storage.sync.get(["cl"], function (result) {
@@ -124,9 +128,15 @@ function initialize() {
     // timeout to allow time for chrome to sync url values
     let documentURL = new URL(document.URL);
     setTimeout(function () {
-        if (!urls) { urls = ""; }
-        if (urls && urls.includes(documentURL.hostname) || urls === "*") { addFunction(); }
-        else { console.timeEnd("Sumit initialization"); }
+        if (!urls) {
+            urls = "";
+        }
+        if (urls && urls.includes(documentURL.hostname) || urls === "*") {
+            addFunction();
+        }
+        else {
+            console.timeEnd("Sumit initialization");
+        }
     }, 10);
 }
 
