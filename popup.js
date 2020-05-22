@@ -30,6 +30,6 @@ chrome.storage.sync.get(["whitelist"], function (result) {
 
 chrome.storage.sync.get(["cl"], function (result) {
     if (result.cl) {
-        document.getElementById("sl").innerHTML = "Searches left: " + result.cl;
+        document.getElementById("sl").innerHTML = "Credits left: " + result.cl;
     }
 });

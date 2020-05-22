@@ -1,19 +1,19 @@
 console.time("Sumit initialization"); // measure lag Ln {1, 101}
 
-let apiID = apiKey = cl = urls = 0;
+let apiID, apiKey, cl, urls;
 
 function clearDivs() {
     // hide created divs
     for (let i = 0; i < document.getElementsByTagName('a').length; i++) {
-        if (document.getElementsByClassName("sumit" + String(i))[0]) {
-            document.getElementsByClassName("sumit" + String(i))[0].style.visibility = "hidden";
-            document.getElementsByClassName("sumit" + String(i))[0].scrollTop = 0;
+        if (document.getElementsByClassName("Sumit_" + String(i))[0]) {
+            document.getElementsByClassName("Sumit_" + String(i))[0].style.visibility = "hidden";
+            document.getElementsByClassName("Sumit_" + String(i))[0].scrollTop = 0;
         }
     }
     // clear other divs
     for (let i = 0; i < document.getElementsByTagName('a').length; i++) {
-        for (let j = 1; j < document.getElementsByClassName("sumit" + String(i)).length; j++) {
-            document.getElementsByClassName("sumit" + String(i))[j].parentNode.removeChild(document.getElementsByClassName("sumit" + String(i))[j]);
+        for (let j = 1; j < document.getElementsByClassName("Sumit_" + String(i)).length; j++) {
+            document.getElementsByClassName("Sumit_" + String(i))[j].parentNode.removeChild(document.getElementsByClassName("Sumit_" + String(i))[j]);
         }
     }
 }
@@ -31,7 +31,7 @@ function createDivs(url, summary, id) {
         // load url in iframe
         div.src = url;
     }
-    div.className = "sumit" + String(id);
+    div.className = "Sumit_" + String(id);
     // set div style
     div.style = "position: absolute !important; width: 275px; max-height: 150px; margin: 5px; padding: 10px; background-color: rgba(255, 255, 255, 1) !important; box-shadow: 0px 0px 10px grey; font: italic 10pt Times !important; color: black !important; overflow: auto; zIndex: 10000000 !important; visibility: visible;";
     document.getElementsByTagName('a')[id].parentElement.appendChild(div);
@@ -41,13 +41,13 @@ function summarize(url, id) {
     let i = 0;
     let summary;
     // if the summary has already been loaded, make that div visible
-    if (document.getElementsByClassName("sumit" + String(id))[0]) {
-        document.getElementsByClassName("sumit" + String(id))[0].style.visibility = "visible";
+    if (document.getElementsByClassName("Sumit_" + String(id))[0]) {
+        document.getElementsByClassName("Sumit_" + String(id))[0].style.visibility = "visible";
     }
     // load iframe when credits are low
-    else if (cl < 10) {
-        createDivs(url, summary, id);
-    }
+    // else if (cl < 10) {
+    //     createDivs(url, summary, id);
+    // }
     else {
         let settings = {
             "async": true,
@@ -69,11 +69,11 @@ function summarize(url, id) {
             if (err === "success" && i === 0) {
                 summary = result.sentences.join(' ');
                 chrome.storage.sync.set({ "cl": limit.getResponseHeader("X-RateLimit-Remaining") });
-            }
+            };
             createDivs(url, summary, id);
             i++; // i prevents two requests from occuring
         });
-    }
+    };
 }
 
 function addFunction() {
@@ -85,24 +85,25 @@ function addFunction() {
                 if (tag.parentElement.querySelector(":hover") === tag) {
                     if (tag.href) {
                         summarize(tag.href, i);
-                    }
-                }
+                    };
+                };
             }, 1500); // wait about 2 seconds before calling summary function
         };
         tag.onmouseout = function () {
             let notHover = setInterval(function () {
-                if (tag.parentElement.querySelector(":hover") !== document.getElementsByClassName("sumit" + String(i))[0]) {
+                if (tag.parentElement.querySelector(":hover") !== document.getElementsByClassName("Sumit_" + String(i))[0]) {
                     // on mouseout, clear all summary boxes
                     clearDivs();
                     clearInterval(notHover);
-                }
+                };
             }, 1400); // wait less time than summary before clearing
         };
-    }
+    };
     console.timeEnd("Sumit initialization");
 }
 
 function initialize() {
+    // get popup values from chrome storage
     chrome.storage.sync.get(["id"], function (result) {
         apiID = result.id;
     });
@@ -120,7 +121,7 @@ function initialize() {
     setTimeout(function () {
         if (!urls) { urls = ''; };
         if (urls && urls.includes(documentURL.hostname) || urls === '*') { addFunction(); }
-        else { console.timeEnd("Sumit initialization"); }
+        else { console.timeEnd("Sumit initialization"); };
     }, 10);
 }
 
