@@ -1,6 +1,6 @@
 console.time("Sumit initialization"); // measure lag Ln {1, 101}
 
-let apiID; apiKey; cl; urls;
+let apiID = apiKey = cl = urls = 0;
 
 function clearDivs() {
     // hide created divs
