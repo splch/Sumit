@@ -1,5 +1,3 @@
-console.time("Sumit initialization"); // measure lag Ln {1, 101}
-
 let apiID = apiKey = cl = urls = 0;
 
 function clearDivs() {
@@ -46,11 +44,10 @@ function createDivs(url, summary, id) {
 function xmlRequest(url, summary, id) {
     let xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function () {
-        if (this.readyState == 4 && this.status == 200) {
-            summary = JSON.parse(this.responseText).sentences.join(" ");
-            createDivs(url, summary, id);
-        }
-        else if (this.readyState == 4 && this.status != 200) {
+        if (this.readyState == 4) {
+            if (this.status == 200) {
+                summary = JSON.parse(this.responseText).sentences.join(" ");
+            }
             createDivs(url, summary, id);
         }
     };
@@ -106,25 +103,24 @@ function addFunction() {
         let tag = document.getElementsByTagName("a")[i];
         tag.onmouseenter = function () {
             // on hover, send url to summarization function
-            setTimeout(function () {
-                if (tag.parentElement.querySelector(":hover") === tag) {
-                    if (tag.href) {
-                        summarize(tag.href, i);
+            setTimeout(() => {
+                if (this.parentElement.querySelector(":hover") === this) {
+                    if (this.href) {
+                        summarize(this.href, i);
                     }
                 }
             }, 1500); // wait about 2 seconds before calling summary function
         };
         tag.onmouseout = function () {
-            let notHover = setInterval(function () {
-                if (tag.parentElement.querySelector(":hover") !== document.getElementsByClassName("Sumit_" + String(i))[0]) {
+            let notHover = setInterval(() => {
+                if (this.parentElement.querySelector(":hover") !== this && this.parentElement.querySelector(":hover") !== this.parentElement.lastChild) {
                     // on mouseout, clear all summary boxes
                     clearDivs();
                     clearInterval(notHover);
                 }
-            }, 1400); // wait less time than summary before clearing
+            }, 5000);
         };
     }
-    console.timeEnd("Sumit initialization");
 }
 
 function initialize() {
@@ -153,9 +149,6 @@ function initialize() {
         }
         if (urls && urls.includes(documentURL.hostname) || urls === "*") {
             addFunction();
-        }
-        else {
-            console.timeEnd("Sumit initialization");
         }
     }, 10);
 }
