@@ -20,20 +20,26 @@ function clearDivs() {
 
 function createDivs(url, summary, id) {
     clearDivs();
-    let div;
-    if (summary) {
-        div = document.createElement("div");
-        // display summary in div
-        div.innerHTML = summary;
-    }
-    else {
-        div = document.createElement("iframe");
-        // load url in iframe
-        div.src = url;
-    }
-    div.className = "Sumit_" + String(id);
+    let div = document.createElement("div");
     // set div style
     div.style = "position: absolute !important; width: 275px; max-height: 150px; margin: 5px; padding: 10px; background-color: rgba(255, 255, 255, 1) !important; box-shadow: 0px 0px 10px grey; font: italic 10pt Times !important; color: black !important; overflow: auto; zIndex: 2147483647 !important; visibility: visible;";
+    div.className = "Sumit_" + String(id);
+    if (summary) {
+        // display summary in div
+        div.innerText = summary;
+    }
+    else {
+        // load text from webpage
+        let xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                div.innerHTML = xhttp.responseText;
+            }
+        };
+        xhttp.open("GET", url, true);
+        xhttp.setRequestHeader("Content-type", "text/html");
+        xhttp.send();
+    }
     document.getElementsByTagName("a")[id].parentElement.appendChild(div);
 }
 
@@ -56,7 +62,6 @@ function xmlRequest(url, summary, id) {
 }
 
 function summarize(url, id) {
-    let i = 0;
     let summary;
     // if the summary has already been loaded, make that div visible
     if (document.getElementsByClassName("Sumit_" + String(id))[0]) {
