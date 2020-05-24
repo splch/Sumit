@@ -1,4 +1,4 @@
-let apiID = apiKey = cl = urls = 0;
+let apiID, apiKey, cl, urls
 
 function clearDivs() {
     // hide created divs
@@ -16,12 +16,24 @@ function clearDivs() {
     }
 }
 
+function hideDiv(node) {
+    setTimeout(() => {
+        if (node.parentElement.querySelector(":hover") !== node && node.parentElement.querySelector(":hover") !== node.parentElement.lastChild) {
+            // on mouseout, clear all summary boxes
+            clearDivs();
+        }
+    }, 1400);
+}
+
 function createDivs(url, summary, id) {
     clearDivs();
     let div = document.createElement("div");
     // set div style
     div.style = "position: absolute !important; width: 275px; max-height: 150px; margin: 5px; padding: 10px; background-color: rgba(255, 255, 255, 1) !important; box-shadow: 0px 0px 10px grey; font: italic 10pt Times !important; color: black !important; overflow: auto; zIndex: 2147483647 !important; visibility: visible;";
     div.className = "Sumit_" + String(id);
+    div.onmouseout = function () {
+        hideDiv(this);
+    }
     if (summary) {
         // display summary in div
         div.innerText = summary;
@@ -112,13 +124,7 @@ function addFunction() {
             }, 1500); // wait about 2 seconds before calling summary function
         };
         tag.onmouseout = function () {
-            let notHover = setInterval(() => {
-                if (this.parentElement.querySelector(":hover") !== this && this.parentElement.querySelector(":hover") !== this.parentElement.lastChild) {
-                    // on mouseout, clear all summary boxes
-                    clearDivs();
-                    clearInterval(notHover);
-                }
-            }, 5000);
+            hideDiv(this);
         };
     }
 }
