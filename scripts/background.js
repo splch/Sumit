@@ -49,6 +49,7 @@ function createDivs(url, summary, id) {
                     {
                         returnCount: 3
                     });
+                // use https://github.com/spencerchurchill/js-summarize as fallback
                 let JsSummary = summarizer.summarize(title, body);
                 summary = JsSummary.join(" ");
                 div.innerText = summary;
