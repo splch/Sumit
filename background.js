@@ -37,8 +37,7 @@ function createDivs(url, summary, id) {
     if (summary) {
         // display summary in div
         div.innerText = summary;
-    }
-    else {
+    } else {
         // load text from webpage
         let xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function () {
@@ -75,12 +74,7 @@ function summarize(url, id) {
     // if the summary has already been loaded, make that div visible
     if (document.getElementsByClassName("Sumit_" + String(id))[0]) {
         document.getElementsByClassName("Sumit_" + String(id))[0].style.visibility = "visible";
-    }
-    // load iframe when credits are low
-    // else if (cl < 10) {
-    //     createDivs(url, summary, id);
-    // }
-    else if (apiKey && apiID) {
+    } else if (apiKey && apiID) {
         let settings = {
             "url": "https://api.aylien.com/api/v1/summarize",
             "method": "POST",
@@ -99,13 +93,11 @@ function summarize(url, id) {
                 summary = result.sentences.join(" ");
                 chrome.storage.sync.set({ "cl": limit.getResponseHeader("X-RateLimit-Remaining") });
                 createDivs(url, summary, id);
-            }
-            else if (err === "error") {
+            } else if (err === "error") {
                 xmlRequest(url, summary, id);
             }
         });
-    }
-    else {
+    } else {
         xmlRequest(url, summary, id);
     }
 }
