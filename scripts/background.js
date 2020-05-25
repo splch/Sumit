@@ -36,13 +36,22 @@ function createDivs(url, summary, id) {
     }
     if (summary) {
         // display summary in div
-        div.innerText = summary;
+        div.innerText = summary.replace(/(\r\n|\n|\r)/gm, "");;
     } else {
         // load text from webpage
         let xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function () {
             if (this.readyState == 4 && this.status == 200) {
-                div.innerHTML = xhttp.responseText;
+                let parsedResponse = (new window.DOMParser()).parseFromString(xhttp.responseText, "text/html");
+                let title = parsedResponse.title;
+                let body = parsedResponse.getElementsByTagName("body")[0].textContent.replace(/(\r\n|\n|\r)/gm, "");
+                let summarizer = new JsSummarize(
+                    {
+                        returnCount: 3
+                    });
+                let JsSummary = summarizer.summarize(title, body);
+                summary = JsSummary.join(" ");
+                div.innerText = summary;
             }
         };
         xhttp.open("GET", url, true);

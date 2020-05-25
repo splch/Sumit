@@ -12,8 +12,11 @@
         "<all_urls>"
       ],
       "js": [
-        "background.js",
-        "jquery.js"
+        "scripts/background.js",
+        "scripts/jquery.js",
+        "scripts/js-summarize/js-summarize.js",
+        "scripts/js-summarize/lib/lodash.js",
+        "scripts/js-summarize/lib/tokenizer.js"
       ]
     }
   ],
