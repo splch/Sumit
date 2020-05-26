@@ -16,13 +16,36 @@ function clearDivs() {
     }
 }
 
-function hideDiv(node) {
+function hideDiv(id) {
     setTimeout(() => {
-        if (node.parentElement.querySelector(":hover") !== node && node.parentElement.querySelector(":hover") !== node.parentElement.lastChild) {
+        let link = document.getElementsByTagName("a")[id];
+        let div = document.getElementsByClassName("Sumit_" + String(id))[0];
+        if (link.parentElement.querySelector(":hover") !== link && document.body.querySelector(":hover") !== div) {
             // on mouseout, clear all summary boxes
             clearDivs();
         }
     }, 1400);
+}
+
+function move(id) {
+    let div = document.getElementsByClassName("Sumit_" + String(id))[0];
+    let coords = document.getElementsByTagName("a")[id].getBoundingClientRect();
+    let maxcoords = document.body.getBoundingClientRect();
+    let divdims = div.getBoundingClientRect();
+    if (maxcoords.right - coords.right >= coords.left) {
+        // div right of link
+        div.style.left = String(window.scrollX + coords.right) + "px";
+    } else {
+        // div left of link
+        div.style.left = String(window.scrollX + coords.right - divdims.width - coords.width) + "px";
+    }
+    if (maxcoords.bottom - coords.bottom >= coords.top) {
+        // div under link
+        div.style.top = String(window.scrollY + coords.bottom) + "px";
+    } else {
+        // div above link
+        div.style.top = String(window.scrollY + coords.bottom - divdims.height - coords.height) + "px";
+    }
 }
 
 function createDivs(url, summary, id) {
@@ -32,11 +55,11 @@ function createDivs(url, summary, id) {
     div.style = "position: absolute !important; width: 275px; max-height: 150px; margin: 5px; padding: 10px; background-color: rgba(255, 255, 255, 1) !important; box-shadow: 0px 0px 10px grey; font: italic 10pt Times !important; color: black !important; overflow: auto; zIndex: 2147483647 !important; visibility: visible;";
     div.className = "Sumit_" + String(id);
     div.onmouseout = function () {
-        hideDiv(this);
+        hideDiv(id);
     }
     if (summary) {
         // display summary in div
-        div.innerText = summary.replace(/(\r\n|\n|\r)/gm, "");;
+        div.innerText = summary.replace(/(\r\n|\n|\r)/gm, "");
     } else {
         // load text from webpage
         let xhttp = new XMLHttpRequest();
@@ -59,7 +82,8 @@ function createDivs(url, summary, id) {
         xhttp.setRequestHeader("Content-type", "text/html");
         xhttp.send();
     }
-    document.getElementsByTagName("a")[id].parentElement.appendChild(div);
+    document.body.appendChild(div);
+    move(id);
 }
 
 function xmlRequest(url, summary, id) {
@@ -83,6 +107,7 @@ function summarize(url, id) {
     let summary;
     // if the summary has already been loaded, make that div visible
     if (document.getElementsByClassName("Sumit_" + String(id))[0]) {
+        move(id);
         document.getElementsByClassName("Sumit_" + String(id))[0].style.visibility = "visible";
     } else if (apiKey && apiID) {
         let settings = {
@@ -126,7 +151,7 @@ function addFunction() {
             }, 1500); // wait about 2 seconds before calling summary function
         };
         tag.onmouseout = function () {
-            hideDiv(this);
+            hideDiv(i);
         };
     }
 }
