@@ -24,7 +24,7 @@ function hideDiv(id) {
             // on mouseout, clear all summary boxes
             clearDivs();
         }
-    }, 1400);
+    }, 999);
 }
 
 function move(id) {
@@ -145,10 +145,13 @@ function addFunction() {
             setTimeout(() => {
                 if (this.parentElement.querySelector(":hover") === this) {
                     if (this.href) {
+                        if (this.protocol !== "https:") {
+                            this.href = this.href.replace("http:", "https:");
+                        }
                         summarize(this.href, i);
                     }
                 }
-            }, 1500); // wait about 2 seconds before calling summary function
+            }, 1000); // wait before calling summary function
         };
         tag.onmouseout = function () {
             hideDiv(i);
