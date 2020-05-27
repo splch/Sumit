@@ -140,22 +140,19 @@ function summarize(url, id) {
 function addFunction() {
     for (let i = 0; i < document.getElementsByTagName("a").length; i++) {
         let tag = document.getElementsByTagName("a")[i];
-        tag.onmouseenter = function () {
-            // on hover, send url to summarization function
-            setTimeout(() => {
-                if (this.parentElement.querySelector(":hover") === this) {
-                    if (this.href) {
-                        if (this.protocol !== "https:") {
-                            this.href = this.href.replace("http:", "https:");
-                        }
-                        summarize(this.href, i);
+        if (tag.href) {
+            tag.onmouseenter = function () {
+                // on hover, send url to summarization function
+                setTimeout(() => {
+                    if (this.parentElement.querySelector(":hover") === this) {
+                        summarize(this.href.replace("http:", "https:"), i);
                     }
-                }
-            }, 1000); // wait before calling summary function
-        };
-        tag.onmouseout = function () {
-            hideDiv(i);
-        };
+                }, 1000); // wait before calling summary function
+            };
+            tag.onmouseout = function () {
+                hideDiv(i);
+            };
+        }
     }
 }
 
@@ -186,7 +183,7 @@ function initialize() {
         if (urls && urls.includes(documentURL.hostname) || urls === "*") {
             addFunction();
         }
-    }, 10);
+    }, 5);
 }
 
 initialize();
