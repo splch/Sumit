@@ -1,4 +1,4 @@
-let apiID, apiKey, cl, urls
+let apiKey, cl, urls
 
 function clearDivs() {
     // hide created divs
@@ -72,7 +72,7 @@ function createDivs(url, summary, id) {
                     {
                         returnCount: 3
                     });
-                // use https://github.com/spencerchurchill/js-summarize as fallback
+                // use https://github.com/splch/js-summarize as fallback
                 let JsSummary = summarizer.summarize(title, body);
                 summary = JsSummary.join(" ");
                 div.innerText = summary;
@@ -86,54 +86,33 @@ function createDivs(url, summary, id) {
     move(id);
 }
 
-function xmlRequest(url, summary, id) {
+function xmlRequest(url, id) {
     let xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function () {
         if (this.readyState == 4) {
+            let summary;
             if (this.status == 200) {
-                summary = JSON.parse(this.responseText).sentences.join(" ");
+                let rsp = JSON.parse(this.responseText);
+                summary = rsp.sm_api_content;
+                cl = rsp.sm_api_limitation;
             }
             createDivs(url, summary, id);
         }
     };
     // get request to aylien sandbox
-    xhttp.open("GET", "https://sandbox.aylien.com/textapi/summarize?" +
-        "sentences_number=" + String(3) +
-        "&url=" + encodeURIComponent(url), true);
+    xhttp.open("GET", "https://api.smmry.com/?" +
+        "SM_API_KEY=" + apiKey +
+        "&SM_URL=" + encodeURIComponent(url), true);
     xhttp.send();
 }
 
 function summarize(url, id) {
-    let summary;
     // if the summary has already been loaded, make that div visible
     if (document.getElementsByClassName("Sumit_" + String(id))[0]) {
         move(id);
         document.getElementsByClassName("Sumit_" + String(id))[0].style.visibility = "visible";
-    } else if (apiKey && apiID) {
-        let settings = {
-            "url": "https://api.aylien.com/api/v1/summarize",
-            "method": "POST",
-            "headers": {
-                "X-AYLIEN-TextAPI-Application-Key": apiKey,
-                "X-AYLIEN-TextAPI-Application-ID": apiID,
-            },
-            "data": {
-                "url": url,
-                "sentences_number": 3,
-            }
-        }
-        $.ajax(settings).always(function (result, err, limit) {
-            // create div regardless of summary
-            if (err === "success") {
-                summary = result.sentences.join(" ");
-                chrome.storage.sync.set({ "cl": limit.getResponseHeader("X-RateLimit-Remaining") });
-                createDivs(url, summary, id);
-            } else if (err === "error") {
-                xmlRequest(url, summary, id);
-            }
-        });
     } else {
-        xmlRequest(url, summary, id);
+        xmlRequest(url, id);
     }
 }
 
@@ -145,7 +124,7 @@ function addFunction() {
                 // on hover, send url to summarization function
                 setTimeout(() => {
                     if (this.parentElement.querySelector(":hover") === this) {
-                        summarize(this.href.replace("http:", "https:"), i);
+                        summarize(this.href, i);
                     }
                 }, 1000); // wait before calling summary function
             };
@@ -158,11 +137,6 @@ function addFunction() {
 
 function initialize() {
     // get popup values from chrome storage
-    chrome.storage.sync.get(["id"], function (result) {
-        if (result.id) {
-            apiID = result.id;
-        }
-    });
     chrome.storage.sync.get(["key"], function (result) {
         if (result.key) {
             apiKey = result.key;
@@ -171,11 +145,11 @@ function initialize() {
     chrome.storage.sync.get(["cl"], function (result) {
         cl = result.cl;
     });
-    chrome.storage.sync.get(["whitelist"], function (result) {
-        urls = result.whitelist;
+    chrome.storage.sync.get(["allowlist"], function (result) {
+        urls = result.allowlist;
     });
     // timeout to allow time for chrome to sync url values
-    let documentURL = new URL(document.URL);
+    let documentURL = new URL(window.location.href);
     setTimeout(function () {
         if (!urls) {
             urls = "";
